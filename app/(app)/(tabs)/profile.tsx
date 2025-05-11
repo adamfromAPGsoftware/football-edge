@@ -1,68 +1,36 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, Platform, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { Settings, LogOut, Medal, Calendar, Clock, ChevronRight } from 'lucide-react-native';
 import { useAuth } from '@/context/AuthContext';
-import { supabase } from '@/lib/supabase';
-import { Profile } from '@/types/db';
 
 export default function ProfileScreen() {
   const { user, signOut } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    exercisesCompleted: 0,
-    learningCompleted: 0,
-    minutesTrained: 0,
-    longestStreak: 0,
+  const [loading, setLoading] = useState(false);
+  const [stats] = useState({
+    exercisesCompleted: 27,
+    learningCompleted: 8,
+    minutesTrained: 345,
+    longestStreak: 14,
   });
   
-  useEffect(() => {
-    fetchProfileData();
-  }, []);
-  
-  const fetchProfileData = async () => {
-    if (!user?.id) return;
-    
-    try {
-      setLoading(true);
-      
-      // In a real app, you would fetch the profile from Supabase
-      // For now, we'll create mock data
-      
-      setProfile({
-        id: user.id,
-        email: user.email,
-        first_name: user.firstName || 'John',
-        last_name: user.lastName || 'Smith',
-        profile_image_url: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg',
-        height: 180,
-        weight: 75,
-        age: 24,
-        positions: ['Center Mid', 'Defensive Mid'],
-        preferred_foot: 'right',
-        training_goal: 'semi-pro',
-        referral_source: 'Friend',
-        player_comparison: 'Kevin De Bruyne',
-        onboarding_completed: true,
-        created_at: new Date().toISOString(),
-      });
-      
-      setStats({
-        exercisesCompleted: 27,
-        learningCompleted: 8,
-        minutesTrained: 345,
-        longestStreak: 14,
-      });
-      
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    } finally {
-      setLoading(false);
-    }
+  // Mock profile data
+  const profile = {
+    id: user?.id || '1',
+    email: user?.email || 'john@example.com',
+    first_name: user?.firstName || 'John',
+    last_name: user?.lastName || 'Smith',
+    profile_image_url: 'https://images.pexels.com/photos/614810/pexels-photo-614810.jpeg',
+    height: 180,
+    weight: 75,
+    age: 24,
+    positions: ['Center Mid', 'Defensive Mid'],
+    preferred_foot: 'right',
+    training_goal: 'semi-pro',
+    player_comparison: 'Kevin De Bruyne',
   };
-  
-  const handleSignOut = async () => {
+
+  const handleSignOut = () => {
     Alert.alert(
       'Sign Out',
       'Are you sure you want to sign out?',
@@ -73,16 +41,14 @@ export default function ProfileScreen() {
         },
         {
           text: 'Sign Out',
-          onPress: async () => {
-            await signOut();
-          },
+          onPress: signOut,
           style: 'destructive',
         },
       ]
     );
   };
   
-  if (!profile) {
+  if (loading) {
     return (
       <View style={styles.loading}>
         <Text>Loading profile...</Text>
