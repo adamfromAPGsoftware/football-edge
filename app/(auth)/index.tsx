@@ -37,7 +37,7 @@ export default function WelcomeScreen() {
             </TouchableOpacity>
           </Link>
           
-          <Link href="/(auth)/sign-up" asChild>
+          <Link href="/(onboarding)" asChild>
             <TouchableOpacity style={styles.signUpButton}>
               <Text style={styles.signUpText}>Create Account</Text>
               <ChevronRight size={20} color="#10B981" />
